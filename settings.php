@@ -79,6 +79,7 @@ if(!class_exists('WP_Plugin_Template_Settings'))
         public function add_menu()
         {
             // Add a page to manage this plugin's settings
+            $plugin_hook =
         	add_options_page(
         	    'WP Plugin Template Settings', 
         	    'WP Plugin Template', 
@@ -86,6 +87,7 @@ if(!class_exists('WP_Plugin_Template_Settings'))
         	    'wp_plugin_template', 
         	    array(&$this, 'plugin_settings_page')
         	);
+            $this->comment_filter_hook = $plugin_hook;
         } // END public function add_menu()
     
         /**

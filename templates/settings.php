@@ -1,3 +1,4 @@
+<!--MY SETTINGS PAGE -->
 <div class="wrap">
     <h2>WP Plugin Template</h2>
     <form method="post" action="options.php"> 
