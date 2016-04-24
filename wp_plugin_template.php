@@ -86,7 +86,8 @@ if(!class_exists('WP_Plugin_Template'))
 
 			//Include upgrade.php
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-			//Update option for plugin
+
+			//Create table
 			if($wpdb->get_var('show tables like "'.$tablename.'"') !== $tablename) {
 					dbDelta($sql);
 					add_option("comment_filter_ver", $commentfilter->version);
@@ -160,7 +161,6 @@ if(!class_exists('WP_Plugin_Template'))
 					break;
 
 					default: break;
-
 				endswitch;
 
 				if ($replace) {
@@ -177,10 +177,10 @@ if(!class_exists('WP_Plugin_Template'))
 		}
 
 		//REPLACE WORDS IN COMMENTS
-		function comment_filter($content,$comment='') {
+		function comment_filter($content, $comment=''){
 			if($comment) {
-				if($comment->comment_approved == '1') {
-					$content = $this->replace_replace( $content, 'comment' );
+				if($comment->comment_approved == '1'){
+					$content = $this->replace_words($content, 'comment');
 				}
 			}
 			return $content;
