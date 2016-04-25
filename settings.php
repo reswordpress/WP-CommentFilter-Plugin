@@ -19,34 +19,34 @@ if(!class_exists('WP_Plugin_Template_Settings'))
         public function admin_init()
         {
         	// register your plugin's settings
-        	register_setting('wp_plugin_template-group', 'setting_a');
-        	register_setting('wp_plugin_template-group', 'setting_b');
+        	register_setting('commentfilter-group', 'setting_a');
+        	register_setting('commentfilter-group', 'setting_b');
 
         	// add your settings section
         	add_settings_section(
-        	    'wp_plugin_template-section', 
+        	    'commentfilter-section', 
         	    'Comment Filter Settings', 
-        	    array(&$this, 'settings_section_wp_plugin_template'), 
+        	    array(&$this, 'settings_section_commentfilter'), 
         	    'commentfilter'
         	);
         	
         	// add your setting's fields
             add_settings_field(
-                'wp_plugin_template-setting_a', 
+                'commentfilter-setting_a', 
                 'Setting A', 
                 array(&$this, 'settings_field_input_text'), 
                 'commentfilter', 
-                'wp_plugin_template-section',
+                'commentfilter-section',
                 array(
                     'field' => 'setting_a'
                 )
             );
             add_settings_field(
-                'wp_plugin_template-setting_b', 
+                'commentfilter-setting_b', 
                 'Setting B', 
                 array(&$this, 'settings_field_input_text'), 
-                'wp_plugin_template', 
-                'wp_plugin_template-section',
+                'commentfilter', 
+                'commentfilter-section',
                 array(
                     'field' => 'setting_b'
                 )
@@ -54,10 +54,10 @@ if(!class_exists('WP_Plugin_Template_Settings'))
             // Possibly do additional admin_init tasks
         } // END public static function activate
         
-        public function settings_section_wp_plugin_template()
+        public function settings_section_commentfilter()
         {
             // Think of this as help text for the section.
-            echo 'These settings do things for the WP Plugin Template.';
+            echo 'These settings do things for the Comment Filter Plugin.';
         }
         
         /**
