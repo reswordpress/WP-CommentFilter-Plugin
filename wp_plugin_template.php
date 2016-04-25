@@ -1,15 +1,15 @@
 <?php
 /*
-Plugin Name: WP Plugin Template
-Plugin URI: https://github.com/fyaconiello/wp_plugin_template
-Description: A simple wordpress plugin template
+Plugin Name: Comment Filter
+Plugin URI: https://github.com/andymuniz/wp_commentfilter_plugin
+Description: A simple comment filter for wordpress. Doesn't change the actual comments in the database, but replaces words before they're displayed on a page using wordpress hooks/filters.
 Version: 1.0
-Author: Francis Yaconiello
-Author URI: http://www.yaconiello.com
+Author: Andy Muniz
+Author URI: http://www.andymuniz.me
 License: GPL2
 */
 /*
-Copyright 2012  Francis Yaconiello  (email : francis@yaconiello.com)
+Copyright 2016  Andy Muniz  (email : munizandy94@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as
@@ -36,7 +36,7 @@ if(!class_exists('WP_Plugin_Template'))
 		var $version = '0.1';
 		var $table_name = 'comment_filter';
 		var $base_name = 'commentfilter';
-		var $comment_filter_hook = '';	//will store generated options_page hook_suffix
+		var $comment_filter_hook = '';	//will store generated options_page hook_suffix so javascript only loads on the settings page
 
 		var $fields = Array(
 			'original'		=>	'Original',
@@ -57,8 +57,8 @@ if(!class_exists('WP_Plugin_Template'))
 			$WP_Plugin_Template_Settings = new WP_Plugin_Template_Settings();
 
 			$plugin = plugin_basename(__FILE__);
-			add_filter("plugin_action_links_$plugin", array( $this, 'plugin_settings_link' ));
-			add_filter('comment_text', array( $this, 'comment_filter'), 200, 2);
+			add_filter("plugin_action_links_$plugin", array($this, 'plugin_settings_link' ));
+			add_filter('comment_text', array($this, 'comment_filter'), 200, 2);
 			//addfilter admin_head 'comment_filter script'
 		} // END public function __construct
 
@@ -87,7 +87,7 @@ if(!class_exists('WP_Plugin_Template'))
 			//Include upgrade.php
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-			//Create table
+			//Create table/checks if a new version exists
 			if($wpdb->get_var('show tables like "'.$tablename.'"') !== $tablename) {
 					dbDelta($sql);
 					add_option("comment_filter_ver", $commentfilter->version);
@@ -110,7 +110,7 @@ if(!class_exists('WP_Plugin_Template'))
 		// Add the settings link to the plugins page
 		function plugin_settings_link($links)
 		{
-			$settings_link = '<a href="options-general.php?page=wp_plugin_template">Settings</a>';
+			$settings_link = '<a href="options-general.php?page=commentfilter">Settings</a>';
 			array_unshift($links, $settings_link);
 			return $links;
 		}

@@ -25,9 +25,9 @@ if(!class_exists('WP_Plugin_Template_Settings'))
         	// add your settings section
         	add_settings_section(
         	    'wp_plugin_template-section', 
-        	    'WP Plugin Template Settings', 
+        	    'Comment Filter Settings', 
         	    array(&$this, 'settings_section_wp_plugin_template'), 
-        	    'wp_plugin_template'
+        	    'commentfilter'
         	);
         	
         	// add your setting's fields
@@ -35,7 +35,7 @@ if(!class_exists('WP_Plugin_Template_Settings'))
                 'wp_plugin_template-setting_a', 
                 'Setting A', 
                 array(&$this, 'settings_field_input_text'), 
-                'wp_plugin_template', 
+                'commentfilter', 
                 'wp_plugin_template-section',
                 array(
                     'field' => 'setting_a'
@@ -81,10 +81,10 @@ if(!class_exists('WP_Plugin_Template_Settings'))
             // Add a page to manage this plugin's settings
             $plugin_hook =
         	add_options_page(
-        	    'WP Plugin Template Settings', 
-        	    'WP Plugin Template', 
+        	    'Comment Filter Settings', 
+        	    'Comment Filter', 
         	    'manage_options', 
-        	    'wp_plugin_template', 
+        	    'commentfilter', 
         	    array(&$this, 'plugin_settings_page')
         	);
             $this->comment_filter_hook = $plugin_hook;
