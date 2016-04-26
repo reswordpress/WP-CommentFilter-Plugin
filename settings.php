@@ -103,5 +103,10 @@ if(!class_exists('WP_Plugin_Template_Settings'))
         	// Render the settings template
         	include(sprintf("%s/templates/settings.php", dirname(__FILE__)));
         } // END public function plugin_settings_page()
+
+        //DECODE FUNCTION
+        function base64($string) {
+            return base64_decode($string,true) ? base64_decode($string) : $string;
+        }
     } // END class WP_Plugin_Template_Settings
 } // END if(!class_exists('WP_Plugin_Template_Settings'))

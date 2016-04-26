@@ -144,8 +144,8 @@ if(!class_exists('WP_Plugin_Template'))
 
 			foreach ($comment_filter_db as $cfdb) {
 
-				$ori = $cfdb['original'];
-				$original[$n] = "/".$ori."/";
+				$ori = $this->base64($cfdb['original']);
+				$original[$n] = "/".$ori."/i";
 				$replacement[$n] = htmlspecialchars_decode($this->esc_textarea($cfdb['replacement']));
 	
 				$n++;

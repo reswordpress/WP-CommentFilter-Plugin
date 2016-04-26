@@ -6,10 +6,13 @@
 
 		//ADD WORD FILTER TO DB _POST
 		if(isset($_POST['submitted']) == 1) {
+			if(!wp_verify_nonce($_POST['comment_filter_nonce'],'comment_filter_nonce_action')){
+				wp_die('NEIN');
+			}
 			// $original 		= isset($_POST['original']) 	? $_POST['original'] : Array();
 			// $replacement 	= isset($_POST['replacement']) 	? $_POST['replacement'] : Array();
-			$original = $_POST['original'];
-			$replacement = $_POST['replacement'];
+			$original = sanitize_text_field($_POST['original']);
+			$replacement = sanitize_text_field($_POST['replacement']);
 
 
 			if(!empty($original)){
@@ -18,8 +21,8 @@
 					(original, replacement)
 					VALUES (%s, %s)",
 					array(
-					//esc_sql(base64_encode(trim($original[$i]))),
-					esc_sql(trim($original)),
+					esc_sql(base64_encode(trim($original))),
+					//esc_sql(trim($original)),
 					esc_sql(trim($replacement)),
 					))); 
 
@@ -32,6 +35,9 @@
 
 		//DELETE BUTTON _POST
 		if(isset($_POST['deleted'])){
+			if(!wp_verify_nonce($_POST['comment_filter_nonce'],'comment_filter_nonce_action')){
+				wp_die('NEIN');
+			}
 			if($_POST['deleted'] >= 1){
 				$wpdb->query($wpdb->prepare("
 					DELETE FROM ".$wpdb->prefix."comment_filter"." 
@@ -45,7 +51,7 @@
 	<?php $action_url = admin_url('options-general.php?page=commentfilter'); ?>
 	<!--Comment WordSwap Add Filter Form -->
 	<form action="<?php echo $action_url;?>" method="post" role="form">
-
+	<?php wp_nonce_field('comment_filter_nonce_action', 'comment_filter_nonce'); ?>
 		<div class="form-group">
 
 			<label for="original">Original:</label>
@@ -80,10 +86,11 @@
 
 			foreach ($comment_filter_db as $cfdb) { ?>
 				<tr>
-					<td><?php echo $cfdb['original'] ?></td>
-					<td><?php echo $cfdb['replacement'] ?></td>
+					<td><?php echo wp_kses(htmlspecialchars($this->base64($cfdb['original']))); ?></td>
+					<td><?php echo wp_kses($cfdb['replacement']); ?></td>
 					<td>
 						<form action="<?php echo $action_url;?>" method="post" role="form">
+						<?php wp_nonce_field('comment_filter_nonce_action', 'comment_filter_nonce'); ?>
 							<button type="submit" class="btn btn-default">Delete</button>
 							<input type="hidden" name="deleted" value="<?php echo $cfdb['id']; ?>">
 						</form>
