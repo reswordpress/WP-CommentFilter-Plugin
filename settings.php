@@ -9,7 +9,7 @@ if(!class_exists('WP_Plugin_Template_Settings'))
 		public function __construct()
 		{
 			// register actions
-            add_action('admin_init', array(&$this, 'admin_init'));
+            //add_action('admin_init', array(&$this, 'admin_init'));
         	add_action('admin_menu', array(&$this, 'add_menu'));
 		} // END public function __construct
 		
