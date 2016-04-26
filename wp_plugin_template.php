@@ -41,10 +41,6 @@ if(!class_exists('WP_Plugin_Template'))
 		var $fields = Array(
 			'original'		=>	'Original',
 			'replacement'	=>	'Replacement',
-			'in_comments'	=>	'Comments',
-			'in_sensitive'	=>	'InSensitive',
-			'in_wordonly'	=>	'Whole Word',
-			'in_regex'		=>	'Regex'
 		);
 
 		/**
@@ -57,8 +53,8 @@ if(!class_exists('WP_Plugin_Template'))
 			$WP_Plugin_Template_Settings = new WP_Plugin_Template_Settings();
 
 			$plugin = plugin_basename(__FILE__);
-			add_filter("plugin_action_links_$plugin", array($this, 'plugin_settings_link' ));
-			add_filter('comment_text', array($this, 'comment_filter'), 200, 2);
+			add_filter("plugin_action_links_$plugin", array(&$this, 'plugin_settings_link' ));
+			add_filter('comment_text', array(&$this, 'comment_filter'), 200, 2);
 			//addfilter admin_head 'comment_filter script'
 		} // END public function __construct
 
@@ -68,21 +64,18 @@ if(!class_exists('WP_Plugin_Template'))
 		 */
 		public static function activate()
 		{
-			global $wbdb;
+			global $wpdb;
 			$commentfilter = new WP_Plugin_Template;
 			$tablename = $wpdb->prefix.$commentfilter->table_name;
+
+			$charset_collate = $wpdb->get_charset_collate();
 
 			$sql = "CREATE TABLE " . $tablename . " (
 				  id mediumint(9) NOT NULL AUTO_INCREMENT,
 				  original TEXT NOT NULL,
 				  replacement TEXT NOT NULL,
-				  in_comments VARCHAR(3) NOT NULL,
-				  in_sensitive VARCHAR(3) NOT NULL,
-				  in_wordonly VARCHAR(3) NOT NULL,
-				  in_regex VARCHAR(3) NOT NULL,
-				  in_bbpress VARCHAR(3) DEFAULT '0' NOT NULL,
 				  UNIQUE KEY id (id)
-				);";
+				) $charset_collate;";
 
 			//Include upgrade.php
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -140,39 +133,27 @@ if(!class_exists('WP_Plugin_Template'))
 		}
 
 		//Function to filter words
-		private function replace_words ($content, $type = '') {
+		private function replace_words ($content) {
+			delete_transient('comment_filter_db');
+
 			$original = $replacement = Array();	//initialize arrays
-			$b = $i = '';	//init strings
 			$n = 1;	//counter
 
-			foreach ($this->comment_filter_db() as $wrdb) {
+			global $wpdb;
+			$comment_filter_db = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix . $this->table_name." ORDER BY id", ARRAY_A);
+
+			foreach ($comment_filter_db as $wrdb) {
+
+				$ori = $wrdb['original'];
+				$original[$n] = "/".$ori."/";
+				$replacement[$n] = htmlspecialchars_decode($this->esc_textarea($wrdb['replacement']));
+	
 				$n++;
-				$b = (wrdb['in_wordonly'] == 'yes') ? '\b' : '';
-				$i = (wrdb['in_sensitive'] == 'yes') ? 'i' : '';
-			
-
-				$replace = false;
-
-				switch ($type):
-					case 'comment' :
-						if('yes' == $wrdb['in_comments']) {
-							$replace = 1;
-						}
-					break;
-
-					default: break;
-				endswitch;
-
-				if ($replace) {
-					$ori = $this->base64($wrdb['original']);
-					$ori = ('yes' !== $wrdb['in_regex']) ? preg_quote($ori) : $ori;	//if using regex put backslash in front of every regex special character
-					$original[$n] = "/$b".$ori."$b/$i";
-					$replacement[$n] = htmlspecialchars_decode($this->esc_textarea($wrdb['replacement']));
-				}
 			}
 
 			//PHP regex find and replace
 			$content = preg_replace($original, $replacement, $content);
+			// delete_transient('comment_filter_db');
 			return $content;
 		}
 
@@ -180,7 +161,7 @@ if(!class_exists('WP_Plugin_Template'))
 		function comment_filter($content, $comment=''){
 			if($comment) {
 				if($comment->comment_approved == '1'){
-					$content = $this->replace_words($content, 'comment');
+					$content = $this->replace_words($content);
 				}
 			}
 			return $content;
