@@ -142,11 +142,11 @@ if(!class_exists('WP_Plugin_Template'))
 			global $wpdb;
 			$comment_filter_db = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix . $this->table_name." ORDER BY id", ARRAY_A);
 
-			foreach ($comment_filter_db as $wrdb) {
+			foreach ($comment_filter_db as $cfdb) {
 
-				$ori = $wrdb['original'];
+				$ori = $cfdb['original'];
 				$original[$n] = "/".$ori."/";
-				$replacement[$n] = htmlspecialchars_decode($this->esc_textarea($wrdb['replacement']));
+				$replacement[$n] = htmlspecialchars_decode($this->esc_textarea($cfdb['replacement']));
 	
 				$n++;
 			}
