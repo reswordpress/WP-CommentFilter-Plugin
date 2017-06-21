@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Comment WordSwap
+Plugin Name: Comment Filter
 Plugin URI: https://www.google.com
 Description: A simple comment filter for wordpress. Doesn't change the actual comments in the database, but replaces words before they're displayed on a page using wordpress hooks/filters.
 Version: 0.1
